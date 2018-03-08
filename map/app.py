@@ -2,10 +2,10 @@ from flask import Flask, Response, request
 import pymongo
 
 DB_NAME = 'iotree'
-DB_HOST = 'ds229435.mlab.com'
+DB_HOST = ''
 DB_PORT = 23
-DB_USER = 'steve'
-DB_PASS = '123456'
+DB_USER = ''
+DB_PASS = ''
 
 connection = pymongo.MongoClient(DB_HOST, DB_PORT)
 db =  connection[DB_NAME]
