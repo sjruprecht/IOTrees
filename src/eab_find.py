@@ -1,19 +1,19 @@
 import argparse
 import numpy as np
-import time
 import cv2
-import serial
 import json
+
+try:
+    import serial
+    SEND_DATA = True
+except ImportError:
+    SEND_DATA = False
 
 # To execute:
 # python EAB_find.py --image EAB-on-purple-trap.jpg
 
-# Set serial for digi dongle
-s = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-
 ap = argparse.ArgumentParser()
-ap.add_argument('-i', '--image', required=True,
-    help='Path to image')
+ap.add_argument('-i', '--image', required=True, help='Path to image')
 args = vars(ap.parse_args())
 
 # Upper and lower rgb space for background
@@ -44,34 +44,36 @@ opposite = cv2.bitwise_not(whiteish)
 canny = cv2.Canny(opposite, 30, 150)
 
 # Find the contours
-(_, cnts, _) = cv2.findContours(canny.copy(), cv2.
-RETR_EXTERNAL,
-cv2.CHAIN_APPROX_SIMPLE)
+_, cnts, _ = cv2.findContours(canny.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 bug_count = 0
 
 # Count what we think are EABs by the number of corners
 if len(cnts) > 0:
-	for index, c in enumerate(cnts):
-		peri = cv2.arcLength(c, True)
-		approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-		#print(len(approx))
+    for index, c in enumerate(cnts):
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        # print(len(approx))
 
-		if len(approx) < 10:
-			cnt = sorted(cnts, key = cv2.contourArea, reverse = True)[index]
-			rect = np.int32(cv2.boxPoints(cv2.minAreaRect(cnt)))
-			perimeter = cv2.arcLength(cnt,True)
-			print(perimeter)
-			if perimeter > 150:
-				bug_count += 1
-				cv2.drawContours(frame, [rect], -1, (0, 255, 0), 2)
+        if len(approx) < 10:
+            cnt = sorted(cnts, key=cv2.contourArea, reverse=True)[index]
+            rect = np.int32(cv2.boxPoints(cv2.minAreaRect(cnt)))
+            perimeter = cv2.arcLength(cnt, True)
+            # print(perimeter)
+            if perimeter > 150:
+                bug_count += 1
+                cv2.drawContours(frame, [rect], -1, (0, 255, 0), 2)
 
 # Dummy data to send with the bug_count
-outgoing = {"lat": "100", "lon": "100", "count" : bug_count, "coverage": "55"}
+outgoing = {"lat": "100", "lon": "100", "count": bug_count, "coverage": "55"}
 
-# Send the data to digi
+# Set serial for digi dongle and send the data to digi
 # Must send as bytestring
-s.write(str.encode(json.dumps(outgoing)))
+if SEND_DATA:
+    s = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+    s.write(str.encode(json.dumps(outgoing)))
+else:
+    print(outgoing)
 
 # Optional stuff for showing what was counted as EAB
 # cv2.imshow('Canny', canny)
