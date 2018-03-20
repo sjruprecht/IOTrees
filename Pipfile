@@ -9,6 +9,7 @@ name = "pypi"
 
 numpy = "*"
 opencv-python = "*"
+pyserial = "*"
 
 
 [dev-packages]
