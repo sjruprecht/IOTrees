@@ -10,6 +10,8 @@ name = "pypi"
 numpy = "*"
 opencv-python = "*"
 pyserial = "*"
+keras = "*"
+tensorflow = "*"
 
 
 [dev-packages]

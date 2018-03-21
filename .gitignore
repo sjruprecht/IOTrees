@@ -1,4 +1,8 @@
 notes.txt
+data/
+temp/
+.DS_Store
+*.npz
 
 # Ignore PyCharm project files
 .idea/

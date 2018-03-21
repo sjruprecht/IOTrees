@@ -19,8 +19,8 @@ import cv2
 def detect(filename: str, save_debug_images=False):
     # Upper and lower rgb space for selecting background
     # Don't be fooled by the name. Started gray, ended up everything but
-    gray_lower = np.array([0, 0, 10], dtype='uint8')
-    gray_upper = np.array([125, 168, 125], dtype='uint8')
+    gray_lower = np.array([40, 70, 70], dtype='uint8')
+    gray_upper = np.array([100, 200, 200], dtype='uint8')
 
     frame = cv2.imread(filename)
 
@@ -30,16 +30,18 @@ def detect(filename: str, save_debug_images=False):
 
     frame_boxes = frame.copy()
 
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
     # Again, don't be fooled by the variable name.
     # Not whitish as much as it selected out the background
     whitish = cv2.inRange(frame, gray_lower, gray_upper)
-    whitish = cv2.GaussianBlur(whitish, (5, 5), 1)
+    # whitish = cv2.GaussianBlur(whitish, (5, 5), 1)
 
     # Now flip the background to be white, subject dark
     opposite = cv2.bitwise_not(whitish)
 
     # Begin edge detection
-    canny = cv2.Canny(opposite, 30, 150)
+    canny = cv2.Canny(whitish, 30, 150)
 
     # Find the contours
     _, contours, _ = cv2.findContours(canny.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
