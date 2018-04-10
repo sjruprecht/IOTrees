@@ -12,8 +12,8 @@ from keras import backend as K
 def main():
     K.set_image_data_format('channels_last')
 
-    num_pos = 16
-    num_neg = 200
+    num_pos = 560
+    num_neg = 1000
 
     # Build positive examples
     files = glob('data/custom/cropped/*.jpg')
@@ -48,15 +48,14 @@ def main():
     rand_idx = np.random.randint(cifar.shape[0], size=num_neg)
     negative = cifar[rand_idx, :, :, :]
 
+    # negative[:, :, :, [0, 1, 2]] = negative[:, :, :, [2, 0, 1]]
+
     # Join positive and negative examples and make labels
     images = np.vstack((positive, negative))
     labels = np.hstack((
         np.ones((num_pos,)),
         np.zeros((num_neg,)),
     ))
-
-    for i in range(images.shape[0]):
-        cv2.imwrite(f'temp/test-{i}.png', images[i, :, :, :])
 
     # Save for training
     np.savez('train.npz', images=images, labels=labels)

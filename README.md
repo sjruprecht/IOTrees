@@ -3,6 +3,11 @@
 RPi3 setup guide in progress...
 
 
+apt update
+apt install -y libsm6 libfontconfig1 libxrender1 libxtst6
+pip install imgaug keras opencv-python
+
+
 Local Development Setup
 -----------------------
 

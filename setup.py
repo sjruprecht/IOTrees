@@ -10,7 +10,6 @@ setup(
         'console_scripts': [
             'detect=iotrees.detect:main',
             'eab_find=iotrees.eab_find:main',
-            'build=iotrees.build:main',
         ]
     }
 )

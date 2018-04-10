@@ -1,8 +1,11 @@
 notes.txt
 data/
 temp/
+logs/
+models/
 .DS_Store
 *.npz
+*.h5
 
 # Ignore PyCharm project files
 .idea/

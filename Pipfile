@@ -12,6 +12,8 @@ opencv-python = "*"
 pyserial = "*"
 keras = "*"
 tensorflow = "*"
+sklearn = "*"
+"h5py" = "*"
 
 
 [dev-packages]
